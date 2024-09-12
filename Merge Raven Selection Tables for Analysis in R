@@ -1,0 +1,25 @@
+# Set the directory where your text files are stored
+setwd("PASTE/ENTER YOUR WORKING DIRECTORY HERE")
+
+# Get a list of all text files in the directory
+file_list <- list.files(pattern = "*.txt")
+
+# Initialize an empty list to store the data
+data_list <- list()
+
+# Loop through each file and read it into R
+for (file in file_list) {
+  data <- read.table(file, header = TRUE, sep = "\t", stringsAsFactors = FALSE) # Adjust sep as needed (e.g., comma or tab)
+  data_list[[file]] <- data
+}
+
+# Merge all files into one data frame
+merged_data <- do.call(rbind, data_list)
+
+# Optionally, save the merged data into a new file
+write.table(merged_data, file = "merged_data.txt", sep = "\t", row.names = FALSE, col.names = TRUE)
+
+# Assuming 'merged_data' is the data frame from the merged .txt files
+# Convert the merged .txt data into a .csv file
+
+write.csv(merged_data, file = "merged_data.csv", row.names = FALSE)
