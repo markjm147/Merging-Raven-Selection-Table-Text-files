@@ -1,0 +1,33 @@
+# Set the directory where your text files are stored
+setwd("/Users/markmenezes/Desktop/Otus_Data Analysis/Otus_2025_Selection-Tables/txt/")
+
+# Get a list of all text files in the directory
+file_list <- list.files(pattern = "*.txt")
+
+# Initialize an empty list to store the data
+data_list <- list()
+
+# Loop through each file and read it into R
+for (file in file_list) {
+  data <- read.table(file, header = TRUE, sep = "\t", stringsAsFactors = FALSE) # Adjust sep as needed (e.g., tab or comma)
+  data_list[[file]] <- data
+}
+
+# Standardize the column names across all data frames
+all_columns <- unique(unlist(lapply(data_list, colnames)))
+
+# Ensure all data frames have the same columns
+for (i in seq_along(data_list)) {
+  missing_cols <- setdiff(all_columns, colnames(data_list[[i]])) # Find missing columns
+  data_list[[i]][missing_cols] <- NA # Add missing columns with NA
+  data_list[[i]] <- data_list[[i]][all_columns] # Reorder columns to match the complete set
+}
+
+# Merge all files into one data frame
+merged_data <- do.call(rbind, data_list)
+
+# Save the merged data into a new text file
+write.table(merged_data, file = "IndivsPop.txt", sep = "\t", row.names = FALSE, col.names = TRUE)
+
+# Convert the merged data into a .csv file
+write.csv(merged_data, file = "IndivsPop.csv", row.names = FALSE)
